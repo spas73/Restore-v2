@@ -1,7 +1,7 @@
 using System;
 using API.Data;
 using API.DTOs;
-//using API.Entities.OrderAggregate;
+using API.Entities.OrderAggregate;
 using API.Extensions;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +12,7 @@ using Stripe;
 namespace API.Controllers;
 
 public class PaymentsController(PaymentsService paymentsService,
-    StoreContext context/*, IConfiguration config, ILogger<PaymentsController> logger*/)
+    StoreContext context, IConfiguration config, ILogger<PaymentsController> logger)
         : BaseApiController
 {
     [Authorize]
@@ -40,7 +40,7 @@ public class PaymentsController(PaymentsService paymentsService,
         return basket.ToDto();
     }
 
-  /*   [HttpPost("webhook")]
+    [HttpPost("webhook")]
     public async Task<IActionResult> StripeWebhook()
     {
         var json = await new StreamReader(Request.Body).ReadToEndAsync();
@@ -69,9 +69,9 @@ public class PaymentsController(PaymentsService paymentsService,
             logger.LogError(ex, "An expected error has occurred");
             return StatusCode(StatusCodes.Status500InternalServerError, "Unexpected error");
         }
-    } */
+    }
 
-  /*   private async Task HandlePaymentIntentFailed(PaymentIntent intent)
+    private async Task HandlePaymentIntentFailed(PaymentIntent intent)
     {
         var order = await context.Orders
             .Include(x => x.OrderItems)
@@ -91,8 +91,8 @@ public class PaymentsController(PaymentsService paymentsService,
 
         await context.SaveChangesAsync();
     }
- */
-/*     private async Task HandlePaymentIntentSucceeded(PaymentIntent intent)
+
+    private async Task HandlePaymentIntentSucceeded(PaymentIntent intent)
     {
         var order = await context.Orders
            .Include(x => x.OrderItems)
@@ -108,25 +108,25 @@ public class PaymentsController(PaymentsService paymentsService,
             order.OrderStatus = OrderStatus.PaymentReceived;
         }
 
-        var basket = await context.Baskets.FirstOrDefaultAsync(x => 
+        var basket = await context.Baskets.FirstOrDefaultAsync(x =>
             x.PaymentIntentId == intent.Id);
-            
+
         if (basket != null) context.Baskets.Remove(basket);
 
         await context.SaveChangesAsync();
-    } */
+    }
 
-  /*   private Event ConstructStripeEvent(string json)
+    private Event ConstructStripeEvent(string json)
     {
         try
         {
             return EventUtility.ConstructEvent(json,
-                Request.Headers["Stripe-Signature"], config["StripeSettings:WhSecret"]);
+                Request.Headers["Stripe-Signature"], config["StripeSettings:WhSecret"], throwOnApiVersionMismatch: false);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to construct stripe event");
             throw new StripeException("Invalid signature");
         }
-    } */
+    }
 }

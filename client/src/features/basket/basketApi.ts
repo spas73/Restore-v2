@@ -2,7 +2,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithErrorHandling } from "../../app/api/baseApi";
 import { Item, type Basket } from "../../app/models/basket";
 import type { Product } from "../../app/models/product";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 /*
 La funzione isBasketItem:
@@ -114,7 +114,7 @@ export const basketApi = createApi({
         dispatch(
           basketApi.util.updateQueryData("fetchBasket", undefined, (draft) => {
             draft.items = [];
-            //draft.basketId = "";
+            draft.basketId = "";
           })
         );
         Cookies.remove("basketId");
