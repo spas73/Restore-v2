@@ -40,13 +40,17 @@ export default function UserMenu({ user }: Props) {
       </Button>
       <Menu
         id="fade-menu"
-        MenuListProps={{
-          "aria-labelledby": "fade-button",
+        slotProps={{
+          list: {
+            "aria-labelledby": "fade-button",
+          },
         }}
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        TransitionComponent={Fade}
+        slots={{
+          transition: Fade,
+        }}
       >
         <MenuItem>
           <ListItemIcon>
@@ -54,14 +58,14 @@ export default function UserMenu({ user }: Props) {
           </ListItemIcon>
           <ListItemText>My profile</ListItemText>
         </MenuItem>
-        <MenuItem component={Link} to="/orders">
+        <MenuItem component={Link} to="/orders" onClick={handleClose}>
           <ListItemIcon>
             <History />
           </ListItemIcon>
           <ListItemText>My orders</ListItemText>
         </MenuItem>
         {user.roles.includes("Admin") && (
-          <MenuItem component={Link} to="/inventory">
+          <MenuItem component={Link} to="/inventory" onClick={handleClose}>
             <ListItemIcon>
               <Inventory />
             </ListItemIcon>
@@ -69,7 +73,13 @@ export default function UserMenu({ user }: Props) {
           </MenuItem>
         )}
         <Divider />
-        <MenuItem onClick={logout}>
+        <MenuItem
+          //onClick={logout}
+          onClick={async () => {
+            handleClose();
+            await logout({}); 
+          }}
+        >
           <ListItemIcon>
             <Logout />
           </ListItemIcon>
