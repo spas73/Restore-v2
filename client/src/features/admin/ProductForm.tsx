@@ -168,7 +168,10 @@ export default function ProductForm({
     resolver: zodResolver(createProductSchema),
   });
 
-  const watchFile = watch("file");
+  //const watchFile = watch("file");
+  type ExtendedFile = File & { preview?: string };
+  const watchFile = watch("file") as ExtendedFile | undefined;
+
   const { data } = useFetchFiltersQuery();
   const [createProduct] = useCreateProductMutation();
   const [updateProduct] = useUpdateProductMutation();

@@ -20,17 +20,15 @@ import ProductForm from "./ProductForm";
 import { useState } from "react";
 import type { Product } from "../../app/models/product";
 import { useDeleteProductMutation } from "./adminApi";
-//import { useState } from "react";
-/* import ProductForm from "./ProductForm";
-import { Product } from "../../app/models/product";
-import { useDeleteProductMutation } from "./adminApi"; */
 
 export default function InventoryPage() {
   const productParams = useAppSelector((state) => state.catalog);
   const { data, refetch } = useFetchProductsQuery(productParams);
   const dispatch = useAppDispatch();
+
   const [editMode, setEditMode] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  
   const [deleteProduct] = useDeleteProductMutation();
 
   const handleSelectProduct = (product: Product) => {
