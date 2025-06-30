@@ -17,23 +17,24 @@ import { Delete, Edit } from "@mui/icons-material";
 import AppPagination from "../../app/shared/components/AppPagination";
 import { setPageNumber } from "../catalog/catalogSlice";
 import ProductForm from "./ProductForm";
-import { useState } from "react";
 import type { Product } from "../../app/models/product";
 import { useDeleteProductMutation } from "./adminApi";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function InventoryPage() {
   const productParams = useAppSelector((state) => state.catalog);
   const { data, refetch } = useFetchProductsQuery(productParams);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { id } = useParams(); // read /inventory/:id
+  const productId = id ? parseInt(id) : null;
+  const selectedProduct = data?.items.find((p) => p.id === productId) || null;
 
-  const [editMode, setEditMode] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  
   const [deleteProduct] = useDeleteProductMutation();
 
   const handleSelectProduct = (product: Product) => {
-    setSelectedProduct(product);
-    setEditMode(true);
+    navigate(`/inventory/${product.id}`);
   };
 
   const handleDeleteProduct = async (id: number) => {
@@ -45,13 +46,20 @@ export default function InventoryPage() {
     }
   };
 
-  if (editMode)
+  const isCreateMode = id === "create";
+
+  useEffect(() => {
+    if (id && !isCreateMode && productId && !selectedProduct) {
+      navigate("/not-found");
+    }
+  }, [id, isCreateMode, productId, selectedProduct, navigate]);
+
+  if ((id && selectedProduct) || isCreateMode)
     return (
       <ProductForm
-        setEditMode={setEditMode}
-        product={selectedProduct}
+        product={isCreateMode ? null : selectedProduct}
         refetch={refetch}
-        setSelectedProduct={setSelectedProduct}
+        setSelectedProduct={() => {}}
       />
     );
 
@@ -62,7 +70,7 @@ export default function InventoryPage() {
           Inventory
         </Typography>
         <Button
-          onClick={() => setEditMode(true)}
+          onClick={() => navigate("/inventory/create")}
           sx={{ m: 2 }}
           size="large"
           variant="contained"
